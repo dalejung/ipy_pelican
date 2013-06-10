@@ -31,12 +31,12 @@ in the STATIC_PATHS setting, e.g.:
 """
 import re
 import os
-from .mdx_liquid_tags import LiquidTags
+from mdx_liquid_tags import LiquidTags
+from ipy_pelican.util import copy_content
 
 
-SYNTAX = "{% include_code /path/to/code.py [lang:python] [title] %}"
-FORMAT = re.compile(r"""^(?:\s+)?(?P<src>\S+)(?:\s+)?(?:(?:lang:)(?P<lang>\S+))?(?:\s+)?(?P<title>.+)?$""")
-
+SYNTAX = "{% include_code /path/to/code.py [refresh:False] [lang:python] [title] %}"
+FORMAT = re.compile(r"""^(?:\s+)?(?P<src>\S+)?(?:\s+)?(?:(?:lang:)(?P<lang>\S+))?(?:\s+)(?:(?:refresh:)(?P<refresh>\S+))?(?:\s+)?(?P<title>.+)?$""")
 
 @LiquidTags.register('include_code')
 def include_code(preprocessor, tag, markup):
@@ -50,6 +50,12 @@ def include_code(preprocessor, tag, markup):
         title = argdict['title']
         lang = argdict['lang']
         src = argdict['src']
+        refresh = argdict['refresh']
+
+    if refresh == 'True':
+        refresh = True
+    else:
+        refresh = False
 
     if not src:
         raise ValueError("Error processing input, "
@@ -57,7 +63,7 @@ def include_code(preprocessor, tag, markup):
 
     settings = preprocessor.configs.config['settings']
     code_dir = settings.get('CODE_DIR', 'code')
-    code_path = os.path.join('content', code_dir, src)
+    code_path = copy_content(code_dir, src, refresh=refresh)
 
     if not os.path.exists(code_path):
         raise ValueError("File {0} could not be found".format(code_path))
@@ -101,3 +107,4 @@ def include_code(preprocessor, tag, markup):
 #----------------------------------------------------------------------
 # This import allows image tag to be a Pelican plugin
 from liquid_tags import register
+

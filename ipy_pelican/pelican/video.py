@@ -22,7 +22,7 @@ Output
 """
 import os
 import re
-from .mdx_liquid_tags import LiquidTags
+from mdx_liquid_tags import LiquidTags
 
 SYNTAX = "{% video url/to/video [url/to/video] [url/to/video] [width height] [url/to/poster] %}"
 

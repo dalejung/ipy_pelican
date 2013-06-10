@@ -23,7 +23,7 @@ Output
 [1] https://github.com/imathis/octopress/blob/master/plugins/image_tag.rb
 """
 import re
-from .mdx_liquid_tags import LiquidTags
+from mdx_liquid_tags import LiquidTags
 
 SYNTAX = '{% img [class name(s)] [http[s]:/]/path/to/image [width [height]] [title text | "title text" ["alt text"]] %}'
 
@@ -62,5 +62,3 @@ def img(preprocessor, tag, markup):
 #----------------------------------------------------------------------
 # This import allows image tag to be a Pelican plugin
 from liquid_tags import register
-
-
