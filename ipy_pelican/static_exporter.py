@@ -11,7 +11,10 @@ class FullHtmlStaticExporter(fullhtml.FullHtmlExporter):
     """
     Exports a full HTML document with display assets outputted to files
     """
-    _default_config = Config({'ExtractFigureTransformer':{'enabled':True}}) 
+    _default_config = Config({
+        'ExtractFigureTransformer':{'enabled':True},
+        'CSSHtmlHeaderTransformer':{'enabled':True}
+    }) 
     
     template_file = Unicode(
             'static_fullhtml', config=True,
