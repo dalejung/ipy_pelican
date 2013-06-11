@@ -49,3 +49,7 @@ I have a Mercurial hook to prevent me from comitting refresh:True.
     [hooks]
     pretxncommit.refresh = python:ipy_pelican.refresh_check.check_refresh_hook
     
+Known Issues
+------------
+
+*   Unfortunently, IPython and nbconvert are in a state of constant development. This project requires the latest dev version to work. 
