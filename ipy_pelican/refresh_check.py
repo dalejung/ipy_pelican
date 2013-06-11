@@ -46,12 +46,16 @@ def check_refresh_hook(ui, repo, **kwargs):
     """
     Mercurial in-process hook
     """
-    tip_data = os.popen('hg export tip')
+    # hg export tip is supposed to show tip as if
+    # commit went through but doesn't seem to work
+    # for in process hook. Using hg diff instead
+    tip_data = list(os.popen('hg diff'))
     added = 0
     for filename, linenum in check_refresh(tip_data):
         ui.warn('%s, line %d: refresh:True found' %
                               (filename, linenum))
         added += 1
+    # hooks return True for error
     if added:
         return True
     return False
