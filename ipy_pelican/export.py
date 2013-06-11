@@ -3,8 +3,7 @@ import os
 
 from IPython.nbformat import current as nbformat
 from nbconvert.transformers import extractfigure
-from nbconvert import FullHtmlExporter
-from IPython.config import Config
+from ipy_pelican.static_exporter import FullHtmlStaticExporter
 
 def output_html_notebook(nb_path, asset_dir, start=None, end=None, filename=None, src_dir=''):
     """
@@ -53,16 +52,12 @@ def _write_assets(resources, asset_dir):
             #    with io.open(os.path.join(asset_dir, key), 'w') as f:
             #        f.write(resources[figures_key][text_key][key])
 
-c =  Config({
-            'ExtractFigureTransformer':{'enabled':True}
-            })
-
 def process_html_notebook(nb_path, src_dir=None, start=None, end=None):
 
     with open(nb_path) as f:
         n = nbformat.read(f, 'ipynb')
 
-    fullhtml = FullHtmlExporter(config=c)
+    fullhtml = FullHtmlStaticExporter()
     (nbc,resources) = fullhtml._preprocess(n, resources={})
     if src_dir:
         nbc = _prepend_srcdir(nbc, src_dir)
