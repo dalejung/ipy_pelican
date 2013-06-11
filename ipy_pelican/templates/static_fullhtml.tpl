@@ -80,7 +80,7 @@ init_mathjax();
 
 {% block data_png %}
 {% if output.key_png %}
-<a href="{{output.key_png}}">
+<a href="{{output.key_png}}" target="_new">
 <img src="{{output.key_png}}">
 </a>
 {% else %}
