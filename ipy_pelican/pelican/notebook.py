@@ -81,28 +81,13 @@ def process_header(header):
     # replace the highlight tags
     header = header.replace('highlight', 'highlight-ipynb')
 
-    # specify pre tags
-    header = header.replace('html, body', '\n'.join(('pre.ipynb {',
-                                                     '  color: black;',
-                                                     '  background: #f7f7f7;',
-                                                     '  border: 0;',
-                                                     '  box-shadow: none;',
-                                                     '  margin-bottom: 0;',
-                                                     '  padding: 0;'
-                                                     '}\n',
-                                                     'html, body')))
-
-
-    # create a special div for notebook
-    R = re.compile(r'^body ?{', re.MULTILINE)
-    header = R.sub('div.ipynb {', header)
-
     # specify all headers
     R = re.compile(r'^(h[1-6])', re.MULTILINE)
     repl = lambda match: '.ipynb ' + match.groups()[0]
     header = R.sub(repl, header)
 
     # substitude ipynb class for html and body modifiers
+    # Not sure this is doing anything with latest ipython
     header = header.replace('html, body', '.ipynb div,')
 
     return header.split('\n')
