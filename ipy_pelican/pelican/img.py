@@ -56,8 +56,8 @@ def img(preprocessor, tag, markup):
             attrs['alt'] = attrs['title']
 
     # Return the formatted text
-    return "<img {0}>".format(' '.join('{0}="{1}"'.format(key, val)
-                                       for (key, val) in attrs.iteritems()))
+    return '<a href="{1}" href="_new"><img {0}></a>'.format(' '.join('{0}="{1}"'.format(key, val)
+                                       for (key, val) in attrs.iteritems()), attrs['src'])
 
 #----------------------------------------------------------------------
 # This import allows image tag to be a Pelican plugin
