@@ -52,7 +52,7 @@ def _write_assets(resources, asset_dir):
             #    with io.open(os.path.join(asset_dir, key), 'w') as f:
             #        f.write(resources[figures_key][text_key][key])
 
-def process_html_notebook(nb_path, src_dir=None, start=None, end=None):
+def process_html_notebook(nb_path, src_dir=None, start=None, end=None, **kwargs):
 
     with open(nb_path) as f:
         n = nbformat.read(f, 'ipynb')
@@ -67,6 +67,14 @@ def process_html_notebook(nb_path, src_dir=None, start=None, end=None):
     # this is to keep image names from clashing. image 33 will be image 33 regardless
     # of cells range
     nbc = _subset_cells(nbc, start, end)
+
+    output_only = kwargs.get('output_only', False)
+
+    if output_only:
+        cells = nbc.worksheets[0].cells
+        for cell in cells:
+            del cell['input']
+            del cell['prompt_number']
 
     # render to html
     template = fullhtml.environment.get_template(fullhtml.template_file+fullhtml.template_extension)

@@ -88,3 +88,16 @@ init_mathjax();
 {% endif %}
 {%- endblock data_png %}
 
+{% block in_prompt -%}
+{% if cell.prompt_number %}
+<div class="prompt input_prompt">In&nbsp;[{{cell.prompt_number}}]:</div>
+{% endif %}
+{%- endblock in_prompt %}
+
+{% block input %}
+{% if cell.input %}
+<div class="input_area box-flex1">
+{{cell.input | highlight }}
+</div>
+{% endif %}
+{%- endblock input %}

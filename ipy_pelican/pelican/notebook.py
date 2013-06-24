@@ -172,10 +172,11 @@ def notebook(preprocessor, tag, markup):
     end = argdict.get('end', None)
     refresh = argdict.get('refresh', False)
     name = argdict.get('name', None)
-    output_only = argdict.get('output_only', None)
+    output_only = argdict.get('output_only', False)
 
     settings = preprocessor.configs.config['settings']
-    notebook_output = generate_notebook_output(settings, src, refresh=refresh, start=start, end=end, name=name)
+    notebook_output = generate_notebook_output(settings, src, refresh=refresh, start=start, end=end, 
+                                               name=name, output_only=output_only)
     body_lines, header_lines, resources, asset_path = notebook_output
 
     # start writing out files
@@ -194,7 +195,7 @@ def notebook(preprocessor, tag, markup):
     return body
 notebook.header_saved = False
 
-def generate_notebook_output(settings, src, refresh=False, start=None, end=None, name=None):
+def generate_notebook_output(settings, src, refresh=False, start=None, end=None, name=None, **kwargs):
     # copy file to local content store
     nb_dir =  settings.get('NOTEBOOK_DIR', 'notebooks')
     nb_path = copy_content(nb_dir, src, refresh=refresh, name=name)
@@ -205,18 +206,18 @@ def generate_notebook_output(settings, src, refresh=False, start=None, end=None,
     # generate asset paths
     asset_path, src_dir = _asset_path(nb_path, settings)
 
-    header_lines, body_lines, resources = process_notebook(nb_path, start=start, end=end, src_dir=src_dir)
+    header_lines, body_lines, resources = process_notebook(nb_path, start=start, end=end, src_dir=src_dir, **kwargs)
 
     return body_lines, header_lines, resources, asset_path
 
-def process_notebook(nb_path, start=None, end=None, src_dir=None):
+def process_notebook(nb_path, start=None, end=None, src_dir=None, **kwargs):
     """
     At this point we've got all the paths figured out and explicit. 
 
     Generate HTML and modify it using the original process_body, process_header
     """
     # Call the notebook converter
-    body, resources = he.process_html_notebook(nb_path, start=start, end=end, src_dir=src_dir)
+    body, resources = he.process_html_notebook(nb_path, start=start, end=end, src_dir=src_dir, **kwargs)
 
     soup = BeautifulSoup(body)
     head = soup.find_all('head')[0]
