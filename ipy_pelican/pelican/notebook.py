@@ -92,33 +92,87 @@ def process_header(header):
 
     return header.split('\n')
 
-@LiquidTags.register('notebook')
-def notebook(preprocessor, tag, markup):
+def _regex_vars(markup):
     match = FORMAT.search(markup)
     if match:
         argdict = match.groupdict()
-        src = argdict['src']
-        start = argdict['start']
-        end = argdict['end']
-        refresh = argdict['refresh']
-        name = argdict['name']
     else:
         raise ValueError("Error processing input, "
                          "expected syntax: {0}".format(SYNTAX))
-    if start:
-        start = int(start)
-    else:
-        start = None
+    return argdict
 
-    if end:
-        end = int(end)
-    else:
-        end = None
+def process_markup(markup):
+    """
+    Take markup and return processed vars. This is semi-generalized and could be used in other places. 
 
-    if refresh == 'True':
-        refresh = True
-    else:
-        refresh = False
+    The only issue is with 'src' and dealing with positioal paramters. 
+
+    At least for now, this makes it easy to add additional named/slice_vars to notebook
+    """
+    def _int(i):
+        if i == '':
+            return None
+        return int(i)
+
+    slice_vars = ['cells']
+    named_vars = ['refresh', 'name', 'output_only']
+    processed = {}
+
+    vars = markup.split(' ')
+    src = vars.pop(0)
+    processed['src'] = src
+    for var in vars:
+        # match slice vars
+        for name in slice_vars:
+            if var.startswith(name+'['):
+                ind = var[len(name)+1:-1]
+                if ':' in ind:
+                    inds = ind.split(':')
+                    start, end = [_int(i) for i in inds]
+                else:
+                    start = int(ind)
+                    end = None
+                processed[name] = start, end
+
+        for name in named_vars:
+            if var.startswith(name+':'):
+                val = var[len(name)+1:]
+                try: 
+                    # try to coerce to python varialbe
+                    val = eval(val)
+                except:
+                    # val is string
+                    pass
+                processed[name] = val
+    return processed
+
+def _vars(markup):
+    vars = process_markup(markup)
+    argdict = {}
+
+    argdict['src'] = vars['src']
+    if 'cells' in vars:
+        start, end = vars['cells']
+        argdict['start'] = start
+        argdict['end'] = end
+
+    # transfer over other vars
+    for k in vars:
+        if k not in argdict:
+            argdict[k] = vars[k]
+
+    return argdict
+
+@LiquidTags.register('notebook')
+def notebook(preprocessor, tag, markup):
+    argdict = _vars(markup)
+
+    src = argdict['src']
+    start = argdict.get('start', None)
+    end = argdict.get('end', None)
+    refresh = argdict.get('refresh', False)
+    name = argdict.get('name', None)
+    output_only = argdict.get('output_only', None)
 
     settings = preprocessor.configs.config['settings']
     notebook_output = generate_notebook_output(settings, src, refresh=refresh, start=start, end=end, name=name)
