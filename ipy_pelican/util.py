@@ -2,6 +2,8 @@ import os.path
 import shutil
 import errno
 
+missing = object()
+
 def mkdir_p(path):
     """
     http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python 

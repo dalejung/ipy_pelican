@@ -4,6 +4,7 @@ import os
 from IPython.nbformat import current as nbformat
 from nbconvert.transformers import extractfigure
 from ipy_pelican.static_exporter import FullHtmlStaticExporter
+from ipy_pelican.util import missing
 
 def output_html_notebook(nb_path, asset_dir, start=None, end=None, filename=None, src_dir=''):
     """
@@ -89,6 +90,9 @@ def _subset_cells(nbc, start=None, end=None):
     """
     worksheet = nbc.worksheets[0]
     cells = worksheet.cells[:]
+    # single cell selection
+    if end is missing:
+        end = start + 1
     worksheet.cells = cells[start:end]
     return nbc
 

@@ -46,7 +46,7 @@ are a few extra steps required for this plugin:
 import re
 import os
 from mdx_liquid_tags import LiquidTags
-from ipy_pelican.util import copy_content, mkdir_p
+from ipy_pelican.util import copy_content, mkdir_p, missing
 import ipy_pelican.export as he
 from bs4 import BeautifulSoup
 
@@ -131,7 +131,7 @@ def process_markup(markup):
                     start, end = [_int(i) for i in inds]
                 else:
                     start = int(ind)
-                    end = None
+                    end = missing
                 processed[name] = start, end
 
         for name in named_vars:
