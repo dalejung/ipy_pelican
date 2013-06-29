@@ -47,6 +47,10 @@ def img(preprocessor, tag, markup):
         raise ValueError('Error processing input. '
                          'Expected syntax: {0}'.format(SYNTAX))
 
+    settings = preprocessor.configs.config['settings']
+    siteurl =  settings.get('SITEURL', '')
+    # TODO fix the logic here. Assume's we're using an image in /content/
+    attrs['src'] = siteurl + attrs['src']
     # Check if alt text is present -- if so, split it from title
     if 'title' in attrs:
         match = ReTitleAlt.search(attrs['title'])
