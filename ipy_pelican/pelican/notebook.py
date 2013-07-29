@@ -205,6 +205,8 @@ def generate_notebook_output(settings, src, refresh=False, start=None, end=None,
 
     # generate asset paths
     asset_path, src_dir = _asset_path(nb_path, settings)
+    siteurl =  settings.get('SITEURL', '')
+    src_dir = siteurl + '/' + src_dir;
 
     header_lines, body_lines, resources = process_notebook(nb_path, start=start, end=end, src_dir=src_dir, **kwargs)
 
